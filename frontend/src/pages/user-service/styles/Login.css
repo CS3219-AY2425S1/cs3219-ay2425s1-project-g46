@@ -1,0 +1,71 @@
+/* Author(s): Xinyi
+reference from https://clerk.com/blog/building-a-react-login-page-template
+*/
+#loginFormContainer {
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+}
+
+h1 {
+  display: flex;
+  flex-direction: column;
+  font-size: 32px;
+  font-weight: bolder;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 260px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.formGroup > .inputLabel {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.errorLabel {
+  color: red;
+  font-size: 16px;
+}
+
+.inputBox {
+  height: 48px;
+  width: 400px;
+  font-size: large;
+  border-radius: 8px;
+  border: 1px solid grey;
+  padding-left: 8px;
+}
+
+#buttonContainer {
+  margin: auto;
+  text-align: center;
+}
+
+button {
+  border: none;
+  background: #2d2d2d;
+  color: white;
+  padding: 12px 24px;
+  margin: 8px;
+  font-size: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
