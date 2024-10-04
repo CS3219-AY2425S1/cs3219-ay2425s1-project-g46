@@ -1,4 +1,5 @@
-import React from 'react';
+// Author(s): Xinyi
+import React from "react";
 import axios from "axios";
 
 function Logout() {

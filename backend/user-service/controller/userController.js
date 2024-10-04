@@ -1,19 +1,23 @@
+// Author(s): Andrew, Xinyi
+const db = require("../../firebase");
+const userCollection = db.collection("users");
 
-// session token for persistent login
+// jsonwebtoken to generate session token for persistent login
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET;
-
-
+// bcrypt for hashing password in database
 const bcrypt = require('bcryptjs');
+// import the token secret key used to generate token from .env
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Hash password function
 async function hashPass(password) {
 return await bcrypt.hash(password, 10);
 }
 
-const signup = async (req, res, db) => {
+// sign up API
+const signup = async (req, res) => {
 try {
-    const usersRef = db.collection("users").doc(req.body.email);
+    const usersRef = userCollection.doc(req.body.email);
     const getUser = await usersRef.get();
     
     if (getUser.exists) {
@@ -31,7 +35,7 @@ try {
         password: encryptedPassword
     };
 
-    const response = await db.collection("users").doc(email).set(userJson);
+    const response = await userCollection.doc(email).set(userJson);
     res.send({ message: "User created successfully", response });
     console.log({ message: "User created successfully", response });
     
@@ -41,12 +45,9 @@ try {
 }
 };
 
-
-
-
-
-const login = async (req, res, db) => {
-const usersRef = db.collection("users").doc(req.body.email);
+// login API
+const login = async (req, res) => {
+const usersRef = userCollection.doc(req.body.email);
 const getUser = await usersRef.get();
 if (getUser.exists) {
     // get the hashed password in database to compare
@@ -84,16 +85,13 @@ if (getUser.exists) {
     return res.status(404).send({ message: "No user associated with this email. Please sign up for an account." });
 }
 };
-  
-const logout = async (req, res, db) => {
+
+// logout API
+const logout = async (req, res) => {
     console.log("User is logging out.");
     res.clearCookie('session-id');
     return res.status(200).send({ message: "Logout successful." });
 };
-  
 
-  
-
-
-// Export the signup function
-module.exports = { signup, login, logout};
+// Export user functions
+module.exports = { signup, login, logout };

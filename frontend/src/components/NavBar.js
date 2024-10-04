@@ -1,6 +1,7 @@
-import React from 'react';
-import './NavBar.css';
-import Logout from '../user-service/Logout';
+// Author(s): Xinyi
+import React from "react";
+import "./styles/NavBar.css";
+import Logout from "../pages/user-service/Logout"
 
 function NavBar() {
   const isLoggedIn = sessionStorage.token;

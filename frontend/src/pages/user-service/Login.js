@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
-import "./Login.css";
+// Author(s): Xinyi
+import React, { useState } from "react";
+import "./styles/Login.css";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
-import NavBar from '../common/NavBar';
+import { useNavigate } from "react-router-dom";
+import NavBar from "../../components/NavBar";
 
 // reference from https://clerk.com/blog/building-a-react-login-page-template
 function Login() {
 
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
-	const [emailError, setEmailError] = useState('');
-	const [passwordError, setPasswordError] = useState('');
-	const [loginError, setLoginError] = useState('');
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [emailError, setEmailError] = useState("");
+	const [passwordError, setPasswordError] = useState("");
+	const [loginError, setLoginError] = useState("");
 
 	const navigate = useNavigate();
 
@@ -20,19 +21,19 @@ function Login() {
 		event.preventDefault();
 
 		// set initial error values to empty
-		setEmailError('');
-		setPasswordError('');
-		setLoginError('');
+		setEmailError("");
+		setPasswordError("");
+		setLoginError("");
 
 		// simple validation, check if user has entered both fields
 		// to be modified/changed
-		if ('' === email) {
-			setEmailError('Email is empty');
+		if ("" === email) {
+			setEmailError("Email is empty");
 			return;
 		}
 
-		if ('' === password) {
-			setPasswordError('Password is empty');
+		if ("" === password) {
+			setPasswordError("Password is empty");
 			return;
 		}
 

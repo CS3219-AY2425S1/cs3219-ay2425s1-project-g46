@@ -1,6 +1,6 @@
-/* reference from https://clerk.com/blog/building-a-react-login-page-template
+/* Author(s): Xinyi
+reference from https://clerk.com/blog/building-a-react-login-page-template
 */
-
 #loginFormContainer {
   flex-direction: column;
   display: flex;
