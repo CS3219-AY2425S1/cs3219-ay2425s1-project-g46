@@ -1,0 +1,28 @@
+# Specify the version of the Docker Compose.
+version: "3.9"
+
+# Define the services and applications that make up your application.
+services:
+  question-service:
+    build: ./backend/question-service # Path to the directory containing the Dockerfile for building the question-service image.
+    ports:
+      - 5000:5000 # Maps port 5000 on the host to port 5000 in the container, making the app accessible on the host.
+    volumes:
+      - ./backend/question-service:/app # Mounts the host directory './backend/question-service' to '/app' in the container.
+      - /app/node_modules # Anonymous Volume
+    networks:
+      - peerprep-network # Connects the question-service to the 'peerprep-network' network.
+
+  user-service:
+    build: ./backend/user-service # Path to the directory containing the Dockerfile for building the user-service image.
+    ports:
+      - 5001:5001 # Maps port 5001 on the host to port 5001 in the container, making the app accessible on the host.
+    volumes:
+      - ./backend/user-service:/app # Mounts the host directory './backend/user-service' to '/app' in the container.
+      - /app/node_modules # Anonymous Volume
+    networks:
+      - peerprep-network # Connects the user-service to the 'peerprep-network' network.
+
+networks:
+  peerprep-network: # Defines a network named 'peerprep-network'.
+    driver: bridge # Uses the bridge driver for the network, which is the default and most common network type in Docker.
