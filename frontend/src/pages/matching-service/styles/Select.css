@@ -1,7 +1,4 @@
-/* Author(s): Andrew
-reference from https://clerk.com/blog/building-a-react-login-page-template
-*/
-#signupFormContainer {
+#SelectFormContainer {
   flex-direction: column;
   display: flex;
   align-items: center;
@@ -9,7 +6,7 @@ reference from https://clerk.com/blog/building-a-react-login-page-template
   min-height: 100%;
 }
 
-#signupFormContainer h1 {
+#SelectFormContainer h1 {
   display: flex;
   flex-direction: column;
   font-size: 32px;
@@ -18,7 +15,7 @@ reference from https://clerk.com/blog/building-a-react-login-page-template
   justify-content: center;
 }
 
-#signupFormContainer .buttonContainer {
+#SelectFormContainer .buttonContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,7 +23,7 @@ reference from https://clerk.com/blog/building-a-react-login-page-template
   height: 260px;
 }
 
-#signupFormContainer .formGroup {
+#SelectFormContainer .formGroup {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -35,41 +32,30 @@ reference from https://clerk.com/blog/building-a-react-login-page-template
   padding-bottom: 12px;
 }
 
-#signupFormContainer .formGroup > .inputLabel {
+#SelectFormContainer .formGroup > .inputLabel {
   padding-top: 8px;
   padding-bottom: 8px;
 }
 
-#signupFormContainer .errorLabel {
+#SelectFormContainer .errorLabel {
   color: red;
   font-size: 16px;
 }
 
-#signupFormContainer .inputBox {
+
+#SelectFormContainer .inputBox,
+#SelectFormContainer .dropdown {
   height: 48px;
   width: 400px;
   font-size: large;
   border-radius: 8px;
   border: 1px solid grey;
   padding-left: 8px;
+  box-sizing: border-box;
+  background-color: white;
 }
 
-#signupFormContainer input[type="text"] {
-  all: revert;
-  height: 48px;
-  width: 400px;
-  font-size: large;
-  border-radius: 8px;
-  border: 1px solid grey;
-  padding-left: 8px;
-}
-
-#signupFormContainer #registerButton {
-  margin: auto;
-  text-align: end;
-}
-
-#signupFormContainer button {
+#SelectFormContainer button {
   border: none;
   background: #2d2d2d;
   color: white;
@@ -80,17 +66,7 @@ reference from https://clerk.com/blog/building-a-react-login-page-template
   cursor: pointer;
 }
 
-#signupFormContainer .registerButton {
+#SelectFormContainer .confirmButton {
   display: flex;
   justify-content: flex-end;
-}
-
-#signupFormContainer .login-section {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 10px;
-}
-
-#signupFormContainer .login-section a {
-  margin-left: 5px;
 }

@@ -2,16 +2,17 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
-const UserRestrictedRoute = () => {
+// Route to ensure that logged-in users cannot access certain pages
+const LoggedOutRoute = () => {
 
   // if user is logged-in (and therefore a token is stored in session storage),
   // redirect to another page (link to be modified/changed)
   if (sessionStorage.token) {
     return (
-      <Navigate to="/" />
+      <Navigate to="*" />
     );
   }
   return <Outlet />;
 };
 
-export default UserRestrictedRoute;
+export default LoggedOutRoute;

@@ -9,7 +9,7 @@ reference from https://clerk.com/blog/building-a-react-login-page-template
   min-height: 100%;
 }
 
-h1 {
+#loginFormContainer h1 {
   display: flex;
   flex-direction: column;
   font-size: 32px;
@@ -18,7 +18,7 @@ h1 {
   justify-content: center;
 }
 
-.buttonContainer {
+#loginFormContainer .buttonContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,7 +26,7 @@ h1 {
   height: 260px;
 }
 
-.formGroup {
+#loginFormContainer .formGroup {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -35,17 +35,17 @@ h1 {
   padding-bottom: 12px;
 }
 
-.formGroup > .inputLabel {
+#loginFormContainer .formGroup > .inputLabel {
   padding-top: 8px;
   padding-bottom: 8px;
 }
 
-.errorLabel {
+#loginFormContainer .errorLabel {
   color: red;
   font-size: 16px;
 }
 
-.inputBox {
+#loginFormContainer .inputBox {
   height: 48px;
   width: 400px;
   font-size: large;
@@ -54,12 +54,12 @@ h1 {
   padding-left: 8px;
 }
 
-#buttonContainer {
+#loginFormContainer #buttonContainer {
   margin: auto;
   text-align: center;
 }
 
-button {
+#loginFormContainer button {
   border: none;
   background: #2d2d2d;
   color: white;

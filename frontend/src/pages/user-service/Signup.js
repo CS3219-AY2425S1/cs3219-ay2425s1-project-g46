@@ -1,6 +1,6 @@
 // Author(s): Andrew
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Validation from "./utils/SignupValidation"
 import axios from "axios";
 import "./styles/Signup.css";
@@ -21,7 +21,7 @@ function Signup() {
 
   };
 
-  const naviagte = useNavigate();
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -38,7 +38,7 @@ function Signup() {
       validationErrors.confirmPassword === "") {
       axios.post("http://localhost:5001/user/signup", values)
         .then(res => {
-          naviagte('/user/login');
+          navigate('/user/login');
           setValues({
             name: '',
             email: '',
