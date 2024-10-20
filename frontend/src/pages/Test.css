@@ -1,0 +1,16 @@
+#inputText {
+  width: 1073px;
+  height: 353px;
+  flex-shrink: 0;
+  padding: 8px;
+  margin-bottom: 20px;
+  border: 2px solid var(--sds-color-border-default-default);
+  opacity: var(--sds-size-stroke-border);
+  background: #767676;
+  mix-blend-mode: plus-darker;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  font-size: 16px;
+  color: white;
+  resize: none;
+}

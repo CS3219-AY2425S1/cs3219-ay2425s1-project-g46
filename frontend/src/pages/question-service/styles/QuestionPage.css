@@ -1,0 +1,131 @@
+/* Author(s): <name(s)> */
+.container,
+.containers {
+  /* background-color: #f2f2f2; */
+  padding: 5px 20px 15px 20px;
+  /* border: 1px solid lightgrey; */
+  border-radius: 3px;
+  background: #ffffff;
+  border: 1px solid #dddddd;
+  box-shadow: 0 0px 3px 1px rgba(0, 0, 0, 0.2);
+
+  margin-top: 1rem;
+}
+
+#questionContainer {
+  width: var(--Device-Width, 1200px);
+  height: auto;
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding-bottom: 15px;
+  box-shadow: 0 0px 3px 1px rgba(0, 0, 0, 0.2);
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+  border-radius: 16px;
+  /* background-color: rgba(230, 231, 232, 0.24); */
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  width: 100%;
+}
+
+#questionTitle {
+  color: #000;
+
+  /* Title Page */
+  font-family: var(--sds-typography-title-page-font-family);
+  font-size: 20;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 120%;
+  /* 57.6px */
+  letter-spacing: -0.96px;
+}
+
+#questionTypeContainer {
+  display: inline-flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 25px;
+}
+
+#questionTagContainer {
+  gap: 0.25rem;
+}
+
+.questionTag {
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  border-radius: 16px;
+
+  background-color: #0000000f;
+}
+
+.questionTag::first-letter {
+  text-transform: capitalize;
+}
+
+#errorContainer {
+  background-color: #f2f2f2;
+  border: 0px;
+  box-shadow: none;
+}
+
+/* Loading Spinner */
+.lds-ring,
+.lds-ring div {
+  box-sizing: border-box;
+}
+
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid currentColor;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: currentColor transparent transparent transparent;
+}
+
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

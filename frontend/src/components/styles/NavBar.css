@@ -1,0 +1,65 @@
+/* Author(s): Xinyi */
+nav {
+  display: flex;
+  margin-right: 40px;
+  margin-left: 40px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  height: 10%;
+}
+
+#navBarLogo {
+  font-size: 25px;
+  display: flex;
+  margin: auto 0 auto 0;
+}
+
+#navBarContent {
+  font-size: 20px;
+  display: flex;
+  margin: auto 0 auto auto;
+}
+
+#welcomeUser {
+  font-size: 18px;
+  margin: auto auto auto 5%;
+}
+
+#navBarLinks {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style-type: none;
+  display: flex;
+}
+
+li {
+  padding: 12px 15px;
+  margin: 0 8px 0 8px;
+}
+
+#signUpBtn {
+  border: none;
+  background: lightgray;
+  font-size: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#logBtn > * {
+  border: none;
+  background: black;
+  color: white;
+  padding: 12px 15px;
+  font-size: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+  text-align: center;
+}

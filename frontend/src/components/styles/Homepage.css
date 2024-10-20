@@ -1,0 +1,37 @@
+/* Author(s): Xinyi */
+/* #homepageContainer */
+
+#homepageContainer > #homepageContext {
+    min-height: 80%;
+    max-width: 40vw;
+    margin: 10vh auto;
+    padding: 5vh;
+    border-radius: 3%;
+    background-color: gainsboro;
+}
+
+#homepageContainer > #homepageContext > #homepageContextContent {
+    text-align: center
+}
+
+#homepageContainer #description {
+    display: block;
+    text-align: left;
+    font-size: large;
+    margin: 5vh;
+}
+
+/* #homepageContainer #description p {
+    margin: 0;
+} */
+
+
+#homepageContainer button {
+    border: none;
+    background: black;
+    color: white;
+    padding: 12px 15px;
+    font-size: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
