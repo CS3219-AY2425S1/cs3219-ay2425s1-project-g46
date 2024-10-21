@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import "./styles/Question.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import NavBar from "../../components/NavBar";
 
 function Question() {
   const [data, setData] = useState([]);
@@ -138,96 +139,99 @@ function Question() {
   };
 
   return (
-    <div id="question">
-      {/* <h1>Make Questions</h1> */}
-      <h1>{selectedQuestionId ? "Edit Question" : "Make Questions"}</h1>
-      <form id="questionForm" onSubmit={handleSubmit}>
+    <div>
+      <NavBar />
+      <div id="question">
+        {/* <h1>Make Questions</h1> */}
+        <h1>{selectedQuestionId ? "Edit Question" : "Make Questions"}</h1>
+        <form id="questionForm" onSubmit={handleSubmit}>
+          <div>
+            <input
+              type="Title"
+              name="title"
+              placeholder="Title"
+              value={formData.title}
+              onChange={handleFormChange}
+              autoComplete="off"
+              required
+            />
+            <input
+              type="Category"
+              name="category"
+              placeholder="Category"
+              value={formData.category}
+              onChange={handleFormChange}
+              required
+            />
+            <select name="complexity" value={formData.complexity} onChange={handleFormChange} required>
+              <option value="">Select Complexity</option>
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+          <div>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Enter your description here..."
+              value={formData.description}
+              onChange={handleFormChange}
+            ></textarea>
+            {/* <button type="submit">Add</button> */}
+            <button type="submit">{selectedQuestionId ? "Update" : "Add"}</button>
+            {selectedQuestionId && (
+              <button type="button" onClick={handleReturnToAdd}>
+                Return to Add Question
+              </button>
+            )}
+          </div>
+        </form>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
         <div>
-          <input
-            type="Title"
-            name="title"
-            placeholder="Title"
-            value={formData.title}
-            onChange={handleFormChange}
-            autoComplete="off"
-            required
-          />
-          <input
-            type="Category"
-            name="category"
-            placeholder="Category"
-            value={formData.category}
-            onChange={handleFormChange}
-            required
-          />
-          <select name="complexity" value={formData.complexity} onChange={handleFormChange} required>
-            <option value="">Select Complexity</option>
+          <h1>Questions List</h1>
+          {/* dropdown list to filter questions by complexity */}
+          <select value={complexity} onChange={handleChange}>
+            <option value="">Select a complexity</option>
             <option value="easy">Easy</option>
             <option value="medium">Medium</option>
             <option value="hard">Hard</option>
           </select>
-        </div>
-        <div>
-          <textarea
-            id="description"
-            name="description"
-            placeholder="Enter your description here..."
-            value={formData.description}
-            onChange={handleFormChange}
-          ></textarea>
-          {/* <button type="submit">Add</button> */}
-          <button type="submit">{selectedQuestionId ? "Update" : "Add"}</button>
-          {selectedQuestionId && (
-            <button type="button" onClick={handleReturnToAdd}>
-              Return to Add Question
-            </button>
-          )}
-        </div>
-      </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <div>
-        <h1>Questions List</h1>
-        {/* dropdown list to filter questions by complexity */}
-        <select value={complexity} onChange={handleChange}>
-          <option value="">Select a complexity</option>
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
-        </select>
-        <table id="questionList">
-          {/* Display the data in table format */}
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Title</th>
-              <th>Category</th>
-              <th>Complexity</th>
-              <th>Description</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredData.map((item) => (
-              <tr key={item.id}>
-                <td>{item.id}</td>
-                <td>
-                  <Link to={`/question/${item.id}`}>
-                    {item.title}
-                  </Link>
-                </td>
-                <td>{item.category}</td>
-                <td id="complexity">{item.complexity}</td>
-                <td>{item.description}</td>
-                <td>
-                  <div className="action-button-container">
-                    <button className="edit-question" onClick={() => handleEdit(item)}>Edit</button>
-                    <button className="delete-question" onClick={() => handleDelete(item.id)}>Delete</button>
-                  </div>
-                </td>
+          <table id="questionList">
+            {/* Display the data in table format */}
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Complexity</th>
+                <th>Description</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredData.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.id}</td>
+                  <td>
+                    <Link to={`/question/${item.id}`}>
+                      {item.title}
+                    </Link>
+                  </td>
+                  <td>{item.category}</td>
+                  <td id="complexity">{item.complexity}</td>
+                  <td>{item.description}</td>
+                  <td>
+                    <div className="action-button-container">
+                      <button className="edit-question" onClick={() => handleEdit(item)}>Edit</button>
+                      <button className="delete-question" onClick={() => handleDelete(item.id)}>Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

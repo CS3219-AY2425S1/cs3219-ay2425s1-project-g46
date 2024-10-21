@@ -34,7 +34,11 @@ function NavBar() {
             </li>
           }
           {/* change login/logout button content based on presence of token */}
-          {isLoggedIn ? <Logout></Logout> :
+          {isLoggedIn ?
+            <><li>
+              <a href="/tempMatch">Match</a>
+            </li><Logout></Logout></>
+            :
             <li id="logBtn">
               <a href="/user/login">Login</a>
             </li>

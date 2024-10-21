@@ -7,7 +7,9 @@ const {
   getAllQuestions,
   getQuestionById,
   updateQuestion,
-  deleteQuestion
+  deleteQuestion,
+  getRandomQuestionsByCategory,
+  getRandomQuestionsByCategoryAndComplexity
 } = require("../controller/questionController");
 
 router.get("/", getAllQuestions);
@@ -15,5 +17,7 @@ router.get("/:questionId", getQuestionById);
 router.post("/add", createQuestion);
 router.put("/update/:questionId", updateQuestion);
 router.delete("/delete/:questionId", deleteQuestion);
+router.get("/random/:category", getRandomQuestionsByCategory);
+router.get("/random/:category/:complexity", getRandomQuestionsByCategoryAndComplexity);
 
 module.exports = router;
