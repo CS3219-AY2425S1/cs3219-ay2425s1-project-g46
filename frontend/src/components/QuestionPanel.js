@@ -1,6 +1,5 @@
 // Author(s): Xiu Jia
 const QuestionPanel = ({ questionData }) => {
-
   return (
     <div id="questionContainer" className="container">
       <div className="row">
@@ -8,12 +7,13 @@ const QuestionPanel = ({ questionData }) => {
       </div>
 
       <div id="questionTagContainer" className="row">
-        <div className="questionTag">
-          {questionData.category}
-        </div>
-        <div className="questionTag">
-          {questionData.complexity}
-        </div>
+        {questionData.category.map((category, index) => (
+          <div key={index} className="questionTag">
+            {category.trim()}
+          </div>
+        ))}
+
+        <div className="questionTag">{questionData.complexity}</div>
       </div>
 
       <div className="row">
