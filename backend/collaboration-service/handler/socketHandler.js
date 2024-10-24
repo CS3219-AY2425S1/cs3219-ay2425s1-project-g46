@@ -5,8 +5,11 @@ const db = require("../db/firebase");
 let socketMap = {};
 let intervalMap = {};
 
-let latestContent = ""; // current
-let haveNewData = false;
+// let latestContent = ""; // current
+// let haveNewData = false;
+let latestContent = {}; 
+let haveNewData = {};
+
 
 const handleSocketIO = (io) => {
   io.on("connection", (socket) => {
@@ -39,11 +42,12 @@ const handleSocketIO = (io) => {
       // a timer to backup the current collab data
       const interval = setInterval(async () => {
         const currentTime = new Date().toISOString();
+        const currentContent = latestContent[id];
         const periodicData = {
           user1,
           user2,
           questionData,
-          latestContent,
+          currentContent,
           timestamp: currentTime
         };
 
@@ -52,8 +56,8 @@ const handleSocketIO = (io) => {
           const doc = await collabRef.get();
 
           if (doc.exists) {
-            if (haveNewData) {
-              haveNewData = false;
+            if (haveNewData[id]) {
+              haveNewData[id] = false;
               await collabRef.update(periodicData);
               console.log(`Collab Data updated to Firebase at ${currentTime}`);
             }
@@ -76,8 +80,8 @@ const handleSocketIO = (io) => {
     });
     
     socket.on("sendContent", ({ id, content }) => {
-      haveNewData = true;
-      latestContent = content;
+      haveNewData[id] = true;
+      latestContent[id] = content;
 
       socket.to(id).emit("receiveContent", { content: content });
     });
