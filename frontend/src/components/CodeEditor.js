@@ -1,4 +1,4 @@
-// Author(s): Xue ling
+// Author(s): Xue ling, Calista
 import "./styles/CodeEditor.css";
 import { useEffect, useRef, useState } from "react";
 import { collaborationSocket } from "../config/socket";
@@ -9,10 +9,16 @@ import useSessionStorage from "../hook/useSessionStorage";
 const CodeEditor = ({ id }) => {
   const [code, setCode] = useSessionStorage("", "code");
   const editorRef = useRef(null);
-  const [language, setLanguage] = useState("javascript", "");
+  const [language, setLanguage] = useState("javascript");
+  
 
   useEffect(() => {
     console.log(id);
+    
+    // emit once for default values
+    collaborationSocket.emit("sendCode", { id, code });
+    collaborationSocket.emit("languageChange", { id, language });
+
     collaborationSocket.on("receiveCode", ({ code }) => {
       setCode(code);
     });
@@ -25,7 +31,7 @@ const CodeEditor = ({ id }) => {
       collaborationSocket.off("receiveCode");
       collaborationSocket.off("languageChange");
     };
-  }, [code]);
+  }, [id, language, code]);
 
   function handleEditorChange(code, event) {
     setCode(code);

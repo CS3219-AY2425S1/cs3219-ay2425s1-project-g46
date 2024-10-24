@@ -1,4 +1,4 @@
-// Author(s): Xiu Jia
+// Author(s): Xiu Jia, Calista
 import "./styles/ContentEditor.css";
 import { useEffect } from "react";
 import { collaborationSocket } from "../config/socket";
@@ -9,6 +9,10 @@ const ContentEditor = ({ id }) => {
 
   useEffect(() => {
     console.log(id);
+
+    // emit once for default values
+    collaborationSocket.emit("sendContent", { id, content });
+
     collaborationSocket.on("receiveContent", ({ content }) => {
       setContent(content);
       console.log("content received: ", content);
