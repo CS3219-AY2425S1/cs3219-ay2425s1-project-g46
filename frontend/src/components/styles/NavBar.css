@@ -48,7 +48,7 @@ li {
   cursor: pointer;
 }
 
-#logBtn > * {
+#logBtn>* {
   border: none;
   background: black;
   color: white;

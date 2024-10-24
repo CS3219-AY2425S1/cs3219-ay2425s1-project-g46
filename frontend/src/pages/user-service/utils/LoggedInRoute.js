@@ -3,7 +3,7 @@ import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
 // Route to ensure that users not logged in cannot access certain pages
-const LoggedOutRoute = () => {
+const LoggedInRoute = () => {
 
   // if user is NOT logged-in (and therefore no token in session storage),
   // redirect to another page (link to be modified/changed)
@@ -15,4 +15,4 @@ const LoggedOutRoute = () => {
   return <Outlet />;
 };
 
-export default LoggedOutRoute;
+export default LoggedInRoute;

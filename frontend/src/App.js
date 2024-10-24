@@ -6,6 +6,7 @@ import Test from "./pages/Test";
 import Homepage from "./components/Homepage";
 import Question from "./pages/question-service/Question";
 import QuestionPage from "./pages/question-service/QuestionPage";
+import CollaborationPage from "./pages/collaboration-service/CollaborationPage"
 import PageNotFound from "./components/PageNotFound";
 import Signup from "./pages/user-service/Signup";
 import Login from "./pages/user-service/Login";
@@ -37,6 +38,8 @@ function App() {
           <Route path="/matching/select" element={<Select />} />
           <Route path="/matching/findingmatch" element={<FindingMatch />} />
           <Route path="/matching/matchFound" element={<MatchFound />} />
+          
+          <Route path="/collaboration" element={<CollaborationPage />} />
         </Route>
 
         {/* logged-in users cannot access routes included in 'LoggedOutRoute' */}

@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import socket from "./utils/socket";
+import { matchingSocket } from "../../config/socket";
 import "./styles/Select.css";
 import NavBar from "../../components/NavBar";
 
-// Use the correct URL for the Socket.IO connection
-// const socket = io.connect("http://localhost:5002");
-
-
 function Select() {
-  const naviagte = useNavigate();
+  const navigate = useNavigate();
 
   const [errorMessage, setErrorMessage] = useState({
     topic: '',
@@ -25,15 +21,15 @@ function Select() {
   });
 
   const difficultyLevelOptions = [
-    {label: "Easy", value: "easy"},
-    {label: "Medium", value: "medium"},
-    {label: "Hard", value: "hard"}
+    { label: "Easy", value: "easy" },
+    { label: "Medium", value: "medium" },
+    { label: "Hard", value: "hard" }
   ];
 
   const topicOptions = [
-    {label: "Databases", value: "Databases"},
-    {label: "Algorithms", value: "Algorithms"},
-    {label: "Data Structures", value: "Data Structures"}
+    { label: "Databases", value: "Databases" },
+    { label: "Algorithms", value: "Algorithms" },
+    { label: "Data Structures", value: "Data Structures" }
   ];
 
   const handleInput = (event) => {
@@ -42,9 +38,9 @@ function Select() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    
+
     console.log(`${formData.topic}, ${formData.difficultyLevel}`);
-    
+
     let newErrorMessage = {};
 
     if (formData.topic === "") {
@@ -66,13 +62,13 @@ function Select() {
         ...formData,
         email: sessionStorage.getItem("email"),
         token: sessionStorage.getItem("token"),
-        username: sessionStorage.getItem("username"), 
+        username: sessionStorage.getItem("username"),
       };
 
       // Emit a message to the server when submitting
-      socket.emit("join_matching_queue", updatedFormData);
+      matchingSocket.emit("join_matching_queue", updatedFormData);
 
-      naviagte(`/matching/findingmatch`, {state: updatedFormData});
+      navigate(`/matching/findingmatch`, { state: updatedFormData });
     }
   };
 

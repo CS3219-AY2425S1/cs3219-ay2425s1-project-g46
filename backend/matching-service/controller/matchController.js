@@ -25,12 +25,17 @@ const createMatch = async (user1, user2) => {
         complexity: user2.difficultyLevel,
         isAny: user2.isAny
       },
-      datetime: new Date().toLocaleString("en-SG")
+      createdAt: new Date().toLocaleString("en-SG")
     };
 
-    const response = await matchCollection.doc().set(matchJson);
+    const matchRef = await matchCollection.doc();
 
-    return { status: 200, msg: "Match created successfully", response };
+    await matchRef.set(matchJson);
+
+    // Get match id
+    const id = matchRef.id;
+
+    return { status: 200, msg: "Match created successfully", matchData: matchJson, id };
   } catch (error) {
     return { status: 500, error: error.message };
   }

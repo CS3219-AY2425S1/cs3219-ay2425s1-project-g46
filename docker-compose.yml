@@ -4,6 +4,7 @@ version: "3.9"
 # Define the services and applications that make up your application.
 services:
   question-service:
+    container_name: question-service
     build: ./backend/question-service # Path to the directory containing the Dockerfile for building the question-service image.
     ports:
       - 5000:5000 # Maps port 5000 on the host to port 5000 in the container, making the app accessible on the host.
@@ -14,6 +15,7 @@ services:
       - peerprep-network # Connects the question-service to the 'peerprep-network' network.
 
   user-service:
+    container_name: user-service
     build: ./backend/user-service # Path to the directory containing the Dockerfile for building the user-service image.
     ports:
       - 5001:5001 # Maps port 5001 on the host to port 5001 in the container, making the app accessible on the host.
@@ -23,6 +25,43 @@ services:
     networks:
       - peerprep-network # Connects the user-service to the 'peerprep-network' network.
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - 5672:5672 # rabbitmq server port
+      - 15672:15672 # rabbitmq management port
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - peerprep-network # Connects rabbitmq server to the 'peerprep-network' network.
+    healthcheck: # check status of rabbitmq server
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 1s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  matching-service:
+    container_name: matching-service
+    environment:
+      - RABBIT_HOSTNAME=rabbitmq # URL to connect to rabbitmq container in the network
+    depends_on: # condition to wait for rabbitmq container to be ready
+      rabbitmq:
+        condition: service_healthy 
+    build: ./backend/matching-service # Path to the directory containing the Dockerfile for building the matching-service image.
+    ports:
+      - 5002:5002 # Maps port 5002 on the host to port 5002 in the container, making the app accessible on the host.
+    volumes:
+      - ./backend/matching-service:/app # Mounts the host directory './backend/matching-service' to '/app' in the container.
+      - /app/node_modules # Anonymous Volume
+    networks:
+      - peerprep-network # Connects the matching-service to the 'peerprep-network' network.
+
+volumes:
+  rabbitmq_data:
+
 networks:
   peerprep-network: # Defines a network named 'peerprep-network'.
+    name: peerprep-network
     driver: bridge # Uses the bridge driver for the network, which is the default and most common network type in Docker.
