@@ -19,8 +19,7 @@ function FindingMatch() {
   const { topic, difficultyLevel, token, username } = location.state || {}; // Destructure updatedFormData from state
   const [isAnyDifficulty, setIsAnyDifficulty] = useState(false);
 
-  const [, setRoomId] = useSessionStorage("", "roomId");
-  const [email, ] = useSessionStorage("", "email");
+  const [email,] = useSessionStorage("", "email");
 
   // check for backtrack, navigate back to criteria selection if user confirms action,
   // otherwise stay on page
@@ -112,17 +111,12 @@ function FindingMatch() {
 
   useEffect(() => {
     apiGatewaySocket.on("match_found", ({ data, id }) => {
-      setRoomId(id);
       apiGatewaySocket.emit("createSocketRoom", { data: data, id: id, currentUser: email });
-    });
-
-    apiGatewaySocket.on("readyForCollab", (data) => {
-      navigate("/collaboration", { state: { data: data } });
-    });
+      navigate("/matching/matchFound", { state: { data: data } });
+    }, [navigate]);
 
     return () => {
       apiGatewaySocket.off("match_found");
-      apiGatewaySocket.off("readyForCollab");
     };
   }, [navigate]);
 

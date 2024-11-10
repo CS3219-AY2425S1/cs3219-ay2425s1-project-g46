@@ -9,11 +9,14 @@ const {
     getUser,
     updateAvatar,
     changePassword,
-    getHistory,
+    getHistory
+} = require("../controller/userController");
+
+const {
     addReview,
     getReview,
     addWebsiteFeedback
-} = require("../controller/userController");
+} = require("../controller/feedbackController");
 
 router.post('/signup', signup);
 router.post('/login', login);
