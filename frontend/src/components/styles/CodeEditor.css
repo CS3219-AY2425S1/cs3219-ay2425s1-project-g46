@@ -1,0 +1,37 @@
+/* CodeEditor.css */
+#editor-container {
+  background: #767676;
+  border: 2px solid var(--sds-color-border-default-default);
+  mix-blend-mode: plus-darker;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  margin-bottom: 30px;
+}
+
+#language-select {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  background-color: #f8f9fa;
+  color: #343a40;
+}
+
+#codeButton {
+  margin-top: 10px;
+  background-color: white;
+  color: black;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+#codeButton:hover {
+  background-color: #f0f0f0;
+}
+
+#codeButton:active {
+  background-color: #e0e0e0;
+}

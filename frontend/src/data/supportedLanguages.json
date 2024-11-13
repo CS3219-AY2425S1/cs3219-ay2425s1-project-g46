@@ -1,0 +1,33 @@
+[
+    {
+        "value": "cpp",
+        "label": "C++ (GCC 9.2.0)",
+        "language_id": 54
+    },
+    {
+        "value": "csharp",
+        "label": "C# (Mono 6.6.0.161)",
+        "language_id" : 51
+    },
+    {
+        "value": "java",
+        "label": "Java (OpenJDK 13.0.1)",
+        "language_id": 62
+    },
+    {
+        "value": "javascript",
+        "label": "JavaScript (Node.js 12.14.0)",
+        "language_id": 63
+    },
+    {
+        "value": "python",
+        "label": "Python (3.8.1)",
+        "language_id": 71 
+    },
+
+    {
+        "value": "sql",
+        "label": "SQL (SQLite 3.27.2)",
+        "language_id": 82
+    }
+]

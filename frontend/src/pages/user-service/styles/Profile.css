@@ -1,0 +1,154 @@
+/* * Author(s): Andrew
+reference from https://clerk.com/blog/building-a-react-login-page-template
+*/
+#profilePage {
+  width: var(--Device-Width, 1200px);
+  height: auto;
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  padding-bottom: 15px;
+
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+  border-radius: 16px;
+
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+#profileContainer {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+
+#profileContainer h1 {
+  display: flex;
+  flex-direction: column;
+  font-size: 35px;
+  font-weight: bolder;
+  align-items: center;
+  justify-content: center;
+}
+
+#profileContainer h2 {
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
+  font-weight: bolder;
+  align-items: center;
+  justify-content: center;
+}
+
+#profileContainer .buttonContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 260px;
+}
+
+#profileContainer .sideBySide {
+  display: flex;
+  gap: 20 px;
+
+}
+
+#profileContainer .inputLabel {
+  flex: 1;
+}
+
+#profileContainer .errorLabel {
+  color: red;
+  font-size: 16px;
+}
+
+#profileContainer .inputBox {
+  height: 48px;
+  width: 400px;
+  font-size: large;
+  border-radius: 8px;
+  border: 1px solid grey;
+  padding-left: 8px;
+}
+
+#profileContainer #registerButton {
+  margin: auto;
+  text-align: end;
+}
+
+#profileContainer button {
+  border: none;
+  background: #2d2d2d;
+  color: white;
+  padding: 12px 24px;
+  margin: 8px;
+  font-size: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#profileContainer .updateButton {
+  display: flex;
+  justify-content: flex-end;
+}
+
+#profileContainer .login-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+#profileContainer .login-section a {
+  margin-left: 5px;
+}
+
+#profileContainer .avatar-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+#profileContainer .error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+#profileContainer .reviews-container {
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#profileContainer .reviews-title {
+  font-size: 30px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#profileContainer .overall-rating {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#profileContainer .button-group {
+  display: flex;
+  justify-content: center;
+}

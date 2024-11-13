@@ -1,0 +1,60 @@
+/* Author(s): Xinyi */
+#homepageContainer {
+    width: var(--Device-Width, 1200px);
+    height: auto;
+    flex-shrink: 0;
+  
+    display: flex;
+    flex-direction: column;
+  
+    padding-bottom: 15px;
+  
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+    border-radius: 16px;
+
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+#homepageContainer > #homepageContext {
+    min-height: 80%;
+    max-width: 40vw;
+    margin: 10vh auto;
+    padding: 5vh;
+    border-radius: 3%;
+    background-color: gainsboro;
+
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+#homepageContainer > #homepageContext > #homepageContextContent {
+    text-align: center
+}
+
+#homepageContainer #description {
+    display: block;
+    text-align: left;
+    font-size: large;
+    margin: 5vh;
+}
+
+/* #homepageContainer #description p {
+    margin: 0;
+} */
+
+
+#homepageContainer button {
+    border: none;
+    background: black;
+    color: white;
+    padding: 12px 15px;
+    font-size: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}

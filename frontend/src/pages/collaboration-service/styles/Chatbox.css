@@ -1,0 +1,77 @@
+body {font-family: Arial, Helvetica, sans-serif;}
+* {box-sizing: border-box;}
+
+.open-button {
+  background-color: #555;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+  position: fixed;
+  bottom: 23px;
+  right: 28px;
+  width: 280px;
+}
+
+.chat-popup {
+  position: fixed;
+  bottom: 0;
+  right: 15px;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+  max-width: 300px;
+  background-color: white;
+}
+
+.form-container {
+  padding: 10px;
+}
+
+.form-container textarea {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+  resize: none;
+  min-height: 100px; /* Adjusted for visibility */
+}
+
+.form-container textarea:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+.form-container .btn {
+  background-color: #04AA6D;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 10px;
+  opacity: 0.8;
+}
+
+.form-container .cancel {
+  background-color: red;
+}
+
+.form-container .btn:hover, .open-button:hover {
+  opacity: 1;
+}
+
+/* New styles for displaying messages */
+.messages {
+  max-height: 200px; /* Set a max height for the message container */
+  overflow-y: auto; /* Enable vertical scrolling if necessary */
+  margin-top: 10px; /* Space between the form and messages */
+  padding: 5px; /* Add some padding */
+  border-top: 1px solid #ccc; /* Optional: border between form and messages */
+}
+
+.message {
+  padding: 5px; /* Space around each message */
+  border-bottom: 1px solid #f1f1f1; /* Optional: border between messages */
+}

@@ -1,0 +1,28 @@
+.output-title {
+  font-weight: bold;
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.output-container {
+  border: 2px solid var(--sds-color-border-default-default);
+  height: 220px;
+  background-color: #1e293b;
+  border-radius: 8px;
+  color: white;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.output-text {
+  padding: 8px;
+  font-size: 12px;
+}
+
+.success-text {
+  color: green;
+}
+
+.error-text {
+  color: red;
+}

@@ -1,0 +1,63 @@
+/* Author(s): Xiu Jia */
+#questionPanelContainer {
+  /* width: var(--Device-Width, 1200px); */
+  height: auto;
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding-bottom: 15px;
+  box-shadow: 0 0px 3px 1px rgba(0, 0, 0, 0.2);
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+  border-radius: 16px;
+  /* background-color: rgba(230, 231, 232, 0.24); */
+}
+
+#questionPanelTitle {
+  color: #000;
+
+  /* Title Page */
+  /* font-family: var(--sds-typography-title-page-font-family); */
+  font-size: 20;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 120%;
+  /* 57.6px */
+  letter-spacing: -0.96px;
+}
+
+#questionPanelTagContainer {
+  gap: 0.25rem;
+}
+
+.questionTag {
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  border-radius: 16px;
+
+  background-color: #0000000f;
+}
+
+.questionTag::first-letter {
+  text-transform: capitalize;
+}
+
+.easy {
+  background-color: limegreen;
+  /* background-color: rgba(0, 175, 155, 1); */
+}
+
+.medium {
+  background-color: rgba(255, 184, 0, 1);
+}
+
+.hard {
+  color: white;
+  background-color: rgba(255, 45, 85, 1);
+}

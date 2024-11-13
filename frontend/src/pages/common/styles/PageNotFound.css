@@ -1,0 +1,30 @@
+#pageNotFoundContainer {
+  width: var(--Device-Width, 1200px);
+  height: auto;
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  padding-bottom: 15px;
+
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+  border-radius: 16px;
+
+  background: none;
+  border: none;
+  box-shadow: none;
+
+}
+
+#errorContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  background-color: #f2f2f2;
+  border: 0px;
+  box-shadow: none;
+}

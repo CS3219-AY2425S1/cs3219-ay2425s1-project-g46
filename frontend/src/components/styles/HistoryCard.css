@@ -1,0 +1,115 @@
+.historyCard {
+  width: 80%;
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px 25px;
+  padding-bottom: 40px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  position: relative; 
+  font-family: Arial, sans-serif;
+  transition: transform 0.2s ease-in-out;
+}
+
+.historyCard:hover {
+  transform: translateY(-3px);
+  border-color: #ccc;
+}
+
+.historyCard p {
+  margin: 6px 0;
+  font-size: 15px;
+  color: #333;
+  line-height: 1.4;
+}
+
+.historyCard .extra-info {
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 12px;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.6;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.historyCard .info-item {
+  margin-bottom: 16px;
+}
+
+.historyCard .info-label {
+  font-weight: bold;
+  color: #555;
+  font-size: 14px;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.historyCard .toggle-button {
+  background-color: #4a90e2;
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.historyCard .toggle-button:hover {
+  background-color: #357ab8;
+}
+
+.historyCard .review-given-button,
+.historyCard .review-button {
+  width: 100%;
+  padding: 10px 0;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+.historyCard .review-given-button {
+  background-color: #d4f7e8;
+  color: #2c3e50;
+  outline: 2px solid #93fad9;
+}
+
+.historyCard .review-button {
+  background-color: #4a90e2; 
+  color: white;
+  border: 1px solid #357ab8; 
+}
+
+.historyCard .review-button:hover {
+  background-color: #357ab8; 
+}
+
+.historyCard .code-block {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+  color: #333;
+  white-space: pre-wrap;
+  overflow-x: auto; 
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.historyCard .fromText {
+  font-size: 13px;
+  color: #888;
+  position: absolute;
+  bottom: 10px; 
+  right: 15px; 
+  margin: 0; 
+}
