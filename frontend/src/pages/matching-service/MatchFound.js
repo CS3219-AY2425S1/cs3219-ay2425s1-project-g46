@@ -1,14 +1,22 @@
 // Author(s): Andrew, Xinyi
 import React, { useEffect } from "react";
 import { useLocation, useNavigate, Navigate } from "react-router-dom";
+import "./styles/MatchFound.css";
 import NavBar from "../../components/NavBar";
 import { apiGatewaySocket } from "../../config/socket";
+import useSessionStorage from "../../hook/useSessionStorage";
 
 function MatchFound() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const removeCode = useSessionStorage("", "code")[2];
+  const removeContent = useSessionStorage("", "content")[2];
+
   useEffect(() => {
+    removeCode();
+    removeContent();
+
     apiGatewaySocket.on("readyForCollab", (data) => {
       navigate("/collaboration", { state: { data: data } });
     });
@@ -22,7 +30,7 @@ function MatchFound() {
   if (!location.state) {
     console.log("Unauthorized access to match found page, redirecting to criteria selection");
     return (
-      <Navigate to="/matching/select" />
+      <Navigate to="*" />
     );
   }
   // if match data exists
@@ -50,7 +58,7 @@ function MatchFound() {
   console.log("MatchFoundPage", data); // Log to confirm the data is received correctly
 
   return (
-    <div>
+    <div id="matchFoundPage" className="container">
       <NavBar />
       <div id="MatchFoundController">
         <h1>Match Found</h1>
