@@ -318,7 +318,7 @@ async function updateCodeTextInHistoryIndividual(user1, user2, id) {
   const currentContentText = latestContentText[id];
   const currentContentCode = latestContentCode[id];
 
-  console.log("What is teh contentText", currentContentCode);
+  console.log("contentText updated:", currentContentCode);
 
   try {
     // Update for user1
