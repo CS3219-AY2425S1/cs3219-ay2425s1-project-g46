@@ -6,7 +6,11 @@ const {
   removeUserFromQueue,
   removeUserFromPriorityQueue,
 } = require("../controller/queueController");
-const { createMatch } = require("../controller/matchController");
+const {
+  createMatch,
+  getMatchById,
+  updateMatch
+} = require("../controller/matchController");
 
 const handleSocketIO = (apiGatewaySocket) => {
   apiGatewaySocket.on("connect", () => {
@@ -77,6 +81,50 @@ const handleSocketIO = (apiGatewaySocket) => {
       console.error("Error in cancel_matching:", error);
     }
   });
+
+  apiGatewaySocket.on("checkMatchOngoing", async ({ roomId, socketId, currentUser }) => {
+    try {
+      const { status, msg, error, data } = await getMatchById(roomId);
+
+      let isMatchOngoing = false;
+
+      if (status === 200) {
+        console.log(msg);
+        if (data.status === "ongoing") {
+          isMatchOngoing = true;
+        }
+      } else {
+        console.error("error in check match ongoing", error || "Unknown error during match get by id.");
+      }
+
+      console.log("checkMatchOngoing id", roomId);
+      apiGatewaySocket.emit("checkMatchOngoing", {
+        roomId: roomId,
+        socketId: socketId,
+        status: status,
+        error: error,
+        isMatchOngoing: isMatchOngoing,
+        currentUser: currentUser
+      });
+    } catch (error) {
+      console.error("Error in getting match:", error);
+    }
+  });
+
+  apiGatewaySocket.on("matchEnd", async ({ roomId }) => {
+    try {
+      const { status, msg, error, response } = await updateMatch(roomId);
+
+      if (status === 200) {
+        console.log(msg);
+        console.log(response);
+      } else {
+        console.error(error || "Unknown error during match get by id.");
+      }
+    } catch (error) {
+      console.error("Error in updating match:", error);
+    }
+  })
 };
 
 // Export user functions

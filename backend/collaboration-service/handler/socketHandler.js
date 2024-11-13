@@ -5,6 +5,7 @@ const {
 } = require("../service/questionService");
 
 const db = require("../config/firebase");
+const { getCollabById } = require("../controller/collabController");
 
 let intervalMap = {};
 
@@ -12,10 +13,10 @@ let latestContentText = {};
 let latestContentCode = {};
 let latestLanguage = {};
 let haveNewData = {};
+
 let activeUserInRoom = {}; // track user details in rooms
 let confirmedUsers = {};
 let usersData = {};
-let isRefreshOrClose = false;
 
 const handleSocketIO = (apiGatewaySocket) => {
   apiGatewaySocket.on("connect", () => {
@@ -25,20 +26,15 @@ const handleSocketIO = (apiGatewaySocket) => {
     apiGatewaySocket.emit("collaborationService");
   });
 
-  apiGatewaySocket.on("createSocketRoom", async ({ data, id, roomSize }) => {
-    // Store the socket id for the user
-    // socketMap[currentUser] = socket.id;
-    // socket.roomId = id;
+  apiGatewaySocket.on("createSocketRoom", async ({ data, id, roomSize, currentUser }) => {
 
-    // socket.join(id);
-    // console.log(`User with socket ID ${socket.id} joined room with ID ${id}`);
-    if (activeUserInRoom[id]) {
-      activeUserInRoom[id] = activeUserInRoom[id] + 1;
-    } else {
-      activeUserInRoom[id] = 1;
+    if (!activeUserInRoom[id]) {
+      activeUserInRoom[id] = [];
       confirmedUsers[id] = 0;
     }
-    console.log(`UactiveUserInRoom[id]: ${activeUserInRoom[id]}`);
+    activeUserInRoom[id].push(currentUser);
+
+    console.log(`UactiveUserInRoom[id]: ${activeUserInRoom[id].length}`);
 
     console.log("room", roomSize);
     if (roomSize === 2) {
@@ -54,6 +50,8 @@ const handleSocketIO = (apiGatewaySocket) => {
       console.log("questionData", questionData);
 
       usersData[id] = { user1, user2, questionData };
+
+      console.log("userdata id ", usersData[id]);
 
       apiGatewaySocket.emit("readyForCollab", {
         id: id,
@@ -86,11 +84,93 @@ const handleSocketIO = (apiGatewaySocket) => {
 
       // a timer to backup the current collab data
       const interval = setInterval(async () => {
-        updateCollabData(id);
+        updateCollabData(id, apiGatewaySocket);
       }, 5000);
 
       intervalMap[id] = interval;
     }
+  });
+
+  // When they have reconnected and are now retrieving collab data
+  apiGatewaySocket.on("retrieveCollab", async ({ roomId, socketId, currentUser }) => {
+    // By default when it enters here, the match status is ongoing
+
+    // If usersData found, means service still keeping track of collab data
+    if (activeUserInRoom[roomId] && activeUserInRoom[roomId].length != 0) {
+      confirmedUsers[roomId] = 0;
+
+      if (activeUserInRoom[roomId] && activeUserInRoom[roomId].indexOf(currentUser) == -1) {
+        activeUserInRoom[roomId].push(currentUser);
+      } else if (activeUserInRoom[roomId]) {
+        activeUserInRoom[roomId] = [];
+        activeUserInRoom.push(currentUser);
+      }
+
+      apiGatewaySocket.emit("updateSubmissionCount", {
+        id: roomId,
+        count: confirmedUsers[roomId],
+      });
+
+      apiGatewaySocket.emit("userReconnected", {
+        id: roomId,
+        currentUser
+      });
+
+    } else {  // Only enters if both users had already left
+      console.log("retrieve collab id - both users gone", roomId);
+      const { status, error, data } = await getCollabById(roomId);
+
+      if (status === 200) {
+        const { user1,
+          user2,
+          questionData,
+          currentLanguage,
+          currentContentText,
+          currentContentCode,
+        } = data;
+
+        console.log("usersData[roomId]", usersData[roomId]);
+
+        usersData[roomId] = { user1, user2, questionData };
+
+        console.log("usersData[roomId]", usersData[roomId]);
+
+
+        confirmedUsers[roomId] = 0;
+        activeUserInRoom[roomId] = [];
+        activeUserInRoom[roomId].push(currentUser);
+
+        latestLanguage[roomId] = currentLanguage;
+        latestContentText[roomId] = currentContentText;
+        latestContentCode[roomId] = currentContentCode;
+
+        haveNewData[roomId] = false;
+
+        apiGatewaySocket.emit("checkRoomResponse", {
+          socketId: socketId,
+          code: currentContentCode,
+          content: currentContentText,
+          language: currentLanguage,
+        });
+
+        apiGatewaySocket.emit("updateSubmissionCount", {
+          id: roomId,
+          count: confirmedUsers[roomId],
+        });
+
+        // a timer to backup the current collab data when there's 1 person in it
+        if (activeUserInRoom[roomId].length == 1) {
+          console.log("set interval for saving data");
+          const interval = setInterval(async () => {
+            updateCollabData(roomId, apiGatewaySocket);
+          }, 5000);
+          intervalMap[roomId] = interval;
+        }
+      } else {
+        console.error("error in retrieve collab: ", error);
+      }
+    }
+
   });
 
   apiGatewaySocket.on("sendContent", ({ id, content }) => {
@@ -118,23 +198,39 @@ const handleSocketIO = (apiGatewaySocket) => {
 
   // Handle submission
 
-  apiGatewaySocket.on("endSession", ({ id }) => {
+  apiGatewaySocket.on("endSession", ({ id, roomSize }) => {
     console.log(id);
-    confirmedUsers[id] = confirmedUsers[id] + 1;
 
-    if (confirmedUsers[id] == activeUserInRoom[id]) {
-      console.log("Both users have submitted in room:", id);
-      updateCollabData(id);
-      activeUserInRoom[id] == 0;
-      const { user1, user2, questionData } = usersData[id];
-      apiGatewaySocket.emit('sessionEnded', { user1Email: user1.email, user2Email: user2.email, roomId: id });
-      updateCodeTextInHistoryIndividual(user1, user2, id);
-      // socket.disconnect();
+    if (confirmedUsers[id]) {
+      confirmedUsers[id] = confirmedUsers[id] + 1;
     } else {
-      apiGatewaySocket.emit("submissionCount", {
+      confirmedUsers[id] = 1;
+    }
+
+    console.log("roomSize == confirmedUsers[id]", roomSize == confirmedUsers[id]);
+    if (roomSize == confirmedUsers[id]) {
+      updateCollabData(id);
+      const { user1, user2, questionData } = usersData[id];
+      updateCodeTextInHistoryIndividual(user1, user2, id);
+      delete confirmedUsers[id];
+
+      delete activeUserInRoom[id];
+
+      clearInterval(intervalMap[id]);
+      delete intervalMap[id];
+
+      delete latestContentText[id];
+      delete latestContentCode[id];
+      delete latestLanguage[id];
+      delete haveNewData[id];
+
+      delete usersData[id];
+      apiGatewaySocket.emit('sessionEnded', { user1Email: user1.email, user2Email: user2.email, roomId: id });
+    } else {
+      apiGatewaySocket.emit("updateSubmissionCount", {
         id: id,
         count: confirmedUsers[id],
-        totalUsers: activeUserInRoom[id],
+        totalUsers: roomSize,
       });
     }
   });
@@ -142,106 +238,53 @@ const handleSocketIO = (apiGatewaySocket) => {
   //cancel button
   apiGatewaySocket.on("cancelendSession", ({ id }) => {
     confirmedUsers[id] = Math.max(0, confirmedUsers[id] - 1);
-    apiGatewaySocket.emit("submissionCount", {
+    apiGatewaySocket.emit("updateSubmissionCount", {
       id: id,
       count: confirmedUsers[id],
-      totalUsers: activeUserInRoom[id],
     });
   });
 
-  apiGatewaySocket.on("userDisconnect", ({ id }) => {
-    confirmedUsers[id] = 0;
-    isRefreshOrClose = true;
-    apiGatewaySocket.emit("sendUserDisconnect", { id: id });
-  });
+  // Handle event when the user disconnects
+  apiGatewaySocket.on("socketDisconnecting", ({ roomId, currentUser }) => {
+    console.log("in collab, socket disconnecting");
+    console.log("before activeUser in room", activeUserInRoom[roomId].length);
 
-  apiGatewaySocket.on("userReconnect", ({ id }) => {
-    isRefreshOrClose = false;
-    apiGatewaySocket.emit("sendUserReconnect", { id: id });
-  });
-
-  apiGatewaySocket.on("reloadSession", ({ id }) => {
-    confirmedUsers[id] = Math.max(0, confirmedUsers[id] - 1);
-    // socket.roomId = id;
-
-    // socket.join(id);
-    // console.log(
-    //   `Reloaded - User with socket ID ${socket.id} joined room with ID ${id}`
-    // );
-    isRefreshOrClose = false;
-    apiGatewaySocket.emit("submissionCount", {
-      id: id,
-      count: confirmedUsers[id],
-      totalUsers: activeUserInRoom[id],
-    });
-
-  });
-
-  apiGatewaySocket.on("receiveCount", ({ id }) => {
-    apiGatewaySocket.emit("submissionCount", {
-      id: id,
-      count: confirmedUsers[id],
-      totalUsers: activeUserInRoom[id],
-    });
-  });
-
-  apiGatewaySocket.on("socketDisconnect", ({ roomId }) => {
-    if (typeof activeUserInRoom[roomId] === "undefined" || isNaN(activeUserInRoom[roomId])) {
-            activeUserInRoom[roomId] = 0;
+    if (!activeUserInRoom[roomId]) {
+      console.log("enter here");
+      activeUserInRoom[roomId] = [];
+    } else {
+      console.log("here", activeUserInRoom[roomId].filter((user) => user != currentUser));
+      activeUserInRoom[roomId] = activeUserInRoom[roomId].filter((user) => user != currentUser);
     }
 
-    activeUserInRoom[roomId] = Math.max(
-      0,
-      activeUserInRoom[roomId] - 1
-    );
+    if (roomId && activeUserInRoom[roomId].length == 0) {
+      console.log("activeUser in room", activeUserInRoom[roomId].length);
 
-    console.log("HELP", activeUserInRoom[roomId]);
-    setTimeout(() => {
-      if (!isRefreshOrClose) { //reconnected
-        activeUserInRoom[roomId] += 1; 
-        apiGatewaySocket.emit("submissionCount", {
-          id: roomId,
-          count: confirmedUsers[roomId],
-          totalUsers: activeUserInRoom[roomId],
-        });
-      } isRefreshOrClose = true;
-    }, 2000);
+      console.log(
+        `All users in roomId ${roomId} disconnected, deleting room data`
+      );
+      delete activeUserInRoom[roomId];
 
-    setTimeout(() => {
-      console.log(activeUserInRoom[roomId]);
+      clearInterval(intervalMap[roomId]);
+      delete intervalMap[roomId];
+      delete latestContentText[roomId];
+      delete latestContentCode[roomId];
+      delete latestLanguage[roomId];
+      delete haveNewData[roomId];
 
-      if (activeUserInRoom[roomId] == 0) {
-        console.log(
-          `All users in roomId ${roomId} disconnected, deleting room data`
-        );
-        delete activeUserInRoom[roomId];
-
-        clearInterval(intervalMap[roomId]);
-        delete intervalMap[roomId];
-        delete latestContentText[roomId];
-        delete latestContentCode[roomId];
-        delete latestLanguage[roomId];
-        delete haveNewData[roomId];
-      }
-
-      // for (let user in socketMap) {
-      //   if (socketMap[user] === socket.id) {
-      //     delete socketMap[user];
-      //     break;
-      //   }
-      // }
-
-      // if (socket.roomId) {
-      //   socket.leave(socket.roomId);
-      //   console.log(`User with socket ID ${socket.id} disconnected, leaving ${socket.roomId}`);
-      // } else {
-      //   console.log(`User with socket ID ${socket.id} disconnected`);
-      // }
-    }, 5000);
+      delete confirmedUsers[roomId];
+      delete usersData[roomId];
+    } else {
+      apiGatewaySocket.emit("updateSubmissionCount", {
+        id: roomId,
+        count: confirmedUsers[roomId],
+      });
+      console.log("update submission count");
+    }
   });
 };
 
-async function updateCollabData(id) {
+async function updateCollabData(id, apiGatewaySocket) {
   const currentTime = new Date().toISOString();
   const currentContentText = latestContentText[id];
   const currentContentCode = latestContentCode[id];
@@ -277,12 +320,13 @@ async function updateCollabData(id) {
           `New Collab page for roomid ${id} recorded to Firebase at ${currentTime}`
         );
       }
+
+      apiGatewaySocket.emit("saveData", { id: id });
     } catch (error) {
       console.error("Fail to save to database: ", error);
     }
   }
 }
-
 
 async function createHistoryIndividual(user1, user2, historyData) {
   const roomdId = historyData.roomId
@@ -355,9 +399,4 @@ async function updateCodeTextInHistoryIndividual(user1, user2, id) {
   }
 }
 
-
-
-
-
-// Export user functions
 module.exports = { handleSocketIO };

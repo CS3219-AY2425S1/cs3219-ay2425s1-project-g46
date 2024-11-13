@@ -67,7 +67,7 @@ const handleSocketIO = (io) => {
       const room = io.sockets.adapter.rooms.get(id);
       console.log("room", room.size);
 
-      io.to(collaborationService).emit("createSocketRoom", { data: data, id: id, roomSize: room.size });
+      io.to(collaborationService).emit("createSocketRoom", { data: data, id: id, roomSize: room.size, currentUser: currentUser });
     });
 
     socket.on("readyForCollab", async (data) => {
@@ -83,10 +83,52 @@ const handleSocketIO = (io) => {
 
     socket.on("reconnecting", ({ id, currentUser }) => {
       socketMap[currentUser] = socket.id;
+
+      const beforeJoinRoom = io.sockets.adapter.rooms.get(id);
+      const beforeJoinRoomSize = beforeJoinRoom ? beforeJoinRoom.size : 0;
+
       socket.join(id);
-      console.log(
-        `User with socket ID ${socket.id} reconnected to room with ID ${id}`
-      );
+      socket.roomId = id;
+
+      const afterJoinRoom = io.sockets.adapter.rooms.get(id);
+      const afterJoinRoomSize = afterJoinRoom.size;
+
+      // Means they disconnected and have now joined room
+      if (beforeJoinRoomSize < afterJoinRoomSize) {
+        console.log(
+          `User with socket ID ${socket.id} reconnected to room with ID ${id}`
+        );
+
+        // Now going to check if match is ongoing by first getting 
+        io.to(matchingService).emit("checkMatchOngoing", { roomId: id, socketId: socket.id, currentUser: currentUser });
+      }
+    });
+
+    // Receive match get by id
+    socket.on("checkMatchOngoing", ({ roomId, socketId, status, error, isMatchOngoing, currentUser }) => {
+      // If match ongoing, check for collab data
+      // else match not ongoing, send back to client
+      console.log("checkMatchOngoing id", roomId);
+      if (status === 200 && isMatchOngoing) {
+        io.to(collaborationService).emit("retrieveCollab", { roomId: roomId, socketId: socketId, currentUser: currentUser });
+      } else {
+        io.to(socketId).emit("checkRoomResponse", { isRoomExisting: isMatchOngoing, error: error });
+      }
+    });
+
+
+    socket.on("userReconnected", ({ id, currentUser }) => {
+      io.in(id).emit("userReconnected", { currentUser: currentUser });
+    });
+
+    // From collaboration service
+    socket.on("checkRoomResponse", ({ socketId, code, content, language }) => {
+      io.to(socketId).emit("checkRoomResponse", {
+        isRoomExisting: true,
+        code: code,
+        content: content,
+        language: language
+      });
     });
 
     socket.on("sendContent", (data) => {
@@ -122,76 +164,77 @@ const handleSocketIO = (io) => {
       io.to(id).emit("receiveMessage", { message: message });
     });
 
+    socket.on("saveData", ({ id }) => {
+      io.in(id).emit("saveData");
+    })
+
     socket.on("endSession", ({ id }) => {
       console.log("endSession");
-      io.to(collaborationService).emit("endSession", { id: id });
+
+      const room = io.sockets.adapter.rooms.get(id);
+      console.log("endsession - room", room?.size);
+
+      io.to(collaborationService).emit("endSession", { id: id, roomSize: room.size });
     });
 
-    socket.on("sessionEnded", ({ user1Email, user2Email, roomId }) => {
+    socket.on("sessionEnded", async ({ user1Email, user2Email, roomId }) => {
+      const room = io.sockets.adapter.rooms.get(roomId);
+      console.log("sessionEnded - room", room?.size);
+
       io.in(roomId).emit("sessionEnded", { user1Email: user1Email, user2Email: user2Email, roomId: roomId });
+      console.log(`session ended ${roomId} - ${user1Email} and ${user2Email}`);
 
       const user1 = socketMap[user1Email];
       const user2 = socketMap[user2Email];
       const user1Socket = io.sockets.sockets.get(user1);
       const user2Socket = io.sockets.sockets.get(user2);
       if (user1Socket) {
-        user1Socket.disconnect();
+        user1Socket.leave(roomId);
       }
       if (user2Socket) {
-        user2Socket.disconnect();
+        user2Socket.leave(roomId);
       }
+
+      io.to(matchingService).emit("matchEnd", { roomId });
     });
 
-    socket.on("submissionCount", ({ id, count, totalUsers }) => {
-      io.in(id).emit("submissionCount", { count, totalUsers });
+    socket.on("updateSubmissionCount", ({ id, count }) => {
+      const room = io.sockets.adapter.rooms.get(id);
+
+      if (room) {
+        console.log("update submission count room, total count", count);
+        console.log("update submission count room, total user", room.size);
+
+        io.in(id).emit("updateSubmissionCount", { count, totalUsers: room.size });
+      }
     });
 
     socket.on("cancelendSession", ({ id }) => {
       io.to(collaborationService).emit("cancelendSession", { id: id });
     });
 
-    socket.on("userDisconnect", ({ id }) => {
-      io.to(collaborationService).emit("userDisconnect", { id: id });
-    });
+    // Before socket actually disconnects
+    socket.on("disconnecting", () => {
+      if (socket.id != matchingService && socket.roomId) {
+        socket.leave(socket.roomId);
+        console.log(`User with socket ID ${socket.id} disconnecting, leaving ${socket.roomId}`);
 
-    socket.on("sendUserDisconnect", ({ id }) => {
-      io.in(id).emit("userDisconnect", { id: id });
-    });
+        let currentUser = Object.keys(socketMap).find(currentUser => socketMap[currentUser] === socket.id);
 
-    socket.on("userReconnect", ({ id }) => {
-      io.to(collaborationService).emit("userReconnect", { id: id });
-    });
-
-    socket.on("sendUserReconnect", ({ id }) => {
-      io.in(id).emit("userReconnect", { id: id });
-    });
-
-    socket.on("reloadSession", ({ id }) => {
-      socket.join(id);
-      console.log(`Reloaded - User with socket ID ${socket.id} joined room with ID ${id}`);
-
-      io.to(collaborationService).emit("reloadSession", { id: id });
-    });
-
-    socket.on("receiveCount", ({ id }) => {
-      io.to(id).emit("receiveCount", { id: id });
+        io.to(collaborationService).emit("socketDisconnecting", { roomId: socket.roomId, currentUser: currentUser });
+      } else {
+        console.log(`User with socket ID ${socket.id} disconnecting`);
+      }
     });
 
     // Handle disconnection
     socket.on("disconnect", () => {
       console.log(`User with socket ID ${socket.id} disconnected`);
-      io.to(collaborationService).emit("socketDisconnect", { roomId: socket.roomId });
 
       socketMap = Object.fromEntries(
         Object.entries(socketMap).filter(([key]) => key !== socket.id)
       );
 
-      if (socket.roomId) {
-        socket.leave(socket.roomId);
-        console.log(`User with socket ID ${socket.id} disconnected, leaving ${socket.roomId}`);
-      } else {
-        console.log(`User with socket ID ${socket.id} disconnected`);
-      }
     });
   });
 };

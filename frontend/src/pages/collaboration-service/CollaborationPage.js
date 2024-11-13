@@ -21,16 +21,9 @@ const CollaborationPage = () => {
   const [activeTab, setActiveTab] = useState("code", "");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [userDisconnected, setUserDisconnected] = useState(false);
-  const [unloadFlag, setUnloadFlag] = useSessionStorage("", false);
+  const [userReconnected, setUserReconnected] = useState(false);
+  const [savingData, setSavingData] = useState(false);
 
-  window.onload = () => {
-    if (unloadFlag) {
-      apiGatewaySocket.emit("userReconnect", { id });
-      setUnloadFlag(false);
-      apiGatewaySocket.emit("reloadSession", { id });
-    }
-    apiGatewaySocket.emit("receiveCount", { id });
-  };
   const [email] = useSessionStorage("", "email");
 
   const handleTabChange = (tab) => {
@@ -47,46 +40,82 @@ const CollaborationPage = () => {
     }
   };
 
-  apiGatewaySocket.on("submissionCount", ({ count, totalUsers }) => {
-    setTimeout(() => {
-      setTotalCount(count);
-      setTotalUsers(totalUsers);
-    }, 1000)
-   
-  });
-
-  apiGatewaySocket.on("userDisconnect", () => {
-    setUserDisconnected(true);
-    setTotalCount(0);
-    setTotalUsers(1);
-  });
-
-  apiGatewaySocket.on("userReconnect", () => {
-    setUserDisconnected(false);
-  });
-
-  window.addEventListener("beforeunload", (event) => {
-    setUnloadFlag(true);
-    apiGatewaySocket.emit("userDisconnect", { id });
-  });
-
-  apiGatewaySocket.on("sessionEnded", ({ user1Email, user2Email, roomId }) => {
-    const otherEmail = email === user1Email ? user2Email : user1Email;
-    navigate("/user/userfeedback", {
-      state: {
-        otherUserEmail: otherEmail,
-        roomId: roomId,
-      },
-      replace: true,
-    });
-  });
-
   useEffect(() => {
     if (id) {
       console.log(`email ${email}`);
       apiGatewaySocket.emit("reconnecting", { id: id, currentUser: email });
     }
-  }, [id, apiGatewaySocket]);
+  }, [id, email]);
+
+  useEffect(() => {
+    apiGatewaySocket.on("updateSubmissionCount", ({ count, totalUsers }) => {
+      setTotalCount(count);
+      setTotalUsers(totalUsers);
+      // If other user disconnects, reset the end session status
+      if (count === totalUsers) {
+        setIsSubmitted(false);
+        apiGatewaySocket.emit("cancelendSession", { id });
+      }
+
+      if (totalUsers < 2) {
+        setUserDisconnected(true);
+        setUserReconnected(false);
+
+        setTimeout(() => {
+          setUserDisconnected(false);
+        }, 5000);
+      }
+    });
+
+    apiGatewaySocket.on("sessionEnded", ({ user1Email, user2Email, roomId }) => {
+      console.log("session end");
+      const otherEmail = email === user1Email ? user2Email : user1Email;
+      navigate("/user/userfeedback", {
+        state: {
+          otherUserEmail: otherEmail,
+          roomId: roomId,
+        },
+        replace: true,
+      });
+    });
+
+    apiGatewaySocket.on("checkRoomResponse", ({ isRoomExisting }) => {
+      console.log('isRoomExisting', isRoomExisting);
+      if (!isRoomExisting) {
+        navigate("*", {
+          state: { from: location }, // Save the intended location in state
+          replace: true,
+        });
+      }
+    });
+
+    apiGatewaySocket.on("userReconnected", ({ currentUser }) => {
+      if (currentUser !== email) {
+        setUserDisconnected(false);
+        setUserReconnected(true);
+
+        setTimeout(() => {
+          setUserReconnected(false);
+        }, 5000);
+      }
+    })
+
+    apiGatewaySocket.on("saveData", () => {
+      setSavingData(true);
+
+      setTimeout(() => {
+        setSavingData(false);
+      }, 5000);
+    })
+
+    return () => {
+      apiGatewaySocket.off("updateSubmissionCount");
+      apiGatewaySocket.off("sessionEnded");
+      apiGatewaySocket.off("checkRoomResponse");
+      apiGatewaySocket.off("userReconnected");
+      apiGatewaySocket.off("saveData");
+    }
+  }, [totalCount, totalUsers, email, id, location, navigate]);
 
   return (
     <div id="collaborationPageContainer" className="container">
@@ -94,13 +123,13 @@ const CollaborationPage = () => {
       <QuestionPanel questionData={questionData} />
       <div id="tabs">
         <button
-          className={activeTab == "code" ? "active" : ""}
+          className={activeTab === "code" ? "active" : ""}
           onClick={() => handleTabChange("code")}
         >
           Code
         </button>
         <button
-          className={activeTab == "content" ? "active" : ""}
+          className={activeTab === "content" ? "active" : ""}
           onClick={() => handleTabChange("content")}
         >
           Text
@@ -108,11 +137,17 @@ const CollaborationPage = () => {
         <button id="submitButton" onClick={handleSubmit}>
           {isSubmitted ? "Cancel" : "Submit"}
         </button>
-        <span id="submitCount" class="count-badge">
+        <span id="submitCount" className="count-badge">
           ({totalCount}/{totalUsers})
         </span>
         {userDisconnected && (
           <span id="disconnection-text">The other user has disconnected.</span>
+        )}
+        {userReconnected && (
+          <span id="reconnection-text">The other user has reconnected.</span>
+        )}
+        {savingData && (
+          <span id="reconnection-text">The data has been saved.</span>
         )}
       </div>
 
