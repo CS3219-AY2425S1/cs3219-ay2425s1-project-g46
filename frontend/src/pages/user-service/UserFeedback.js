@@ -76,6 +76,9 @@ function Signup() {
         if (err.response && err.response.data.message) {
           setErrors(prevErrors => ({ ...prevErrors, email: err.response.data.message }));
         } else {
+          if (err.response && err.response.status === 429) {
+            alert("You have exceeded the rate limit. Please wait a moment and try again.");
+          }
           console.log(err);
         }
         setErrorMessage("An error occurred. Please try again.");

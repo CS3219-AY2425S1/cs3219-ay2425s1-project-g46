@@ -49,8 +49,12 @@ function WebsiteFeedback() {
       setSuccessMessage("Feedback submitted successfully!");
     })
     .catch(err => {
-      console.log(err);
-      setErrorMessage("An error occurred. Please try again.");
+      if (err.response && err.response.status === 429) {
+        alert("You have exceeded the rate limit. Please wait a moment and try again.");
+      } else {
+        console.log(err);
+        setErrorMessage("An error occurred. Please try again.");  
+      }
     });
 };
 

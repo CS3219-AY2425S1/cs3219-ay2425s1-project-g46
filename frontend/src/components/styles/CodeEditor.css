@@ -35,16 +35,3 @@
 #codeButton:active {
   background-color: #e0e0e0;
 }
-
-#outputWindow {
-  background-color: #f9f9f9; /* Light grey background for output */
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 15px;
-  margin-top: 20px;
-  font-family: monospace; /* Use a monospace font for code output */
-  white-space: pre-wrap; /* Preserve whitespace */
-  max-height: 400px; /* Limit height for scrolling */
-  overflow-y: auto; /* Add scrollbar if content overflows */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-}

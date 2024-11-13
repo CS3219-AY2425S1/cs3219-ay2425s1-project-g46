@@ -58,6 +58,10 @@ function Login() {
       // route user to homepage after login (to be modified/changed)
       navigate("/");
     }).catch((error) => {
+      if (error.response && error.response.status === 429) {
+        setLoginError(error.response.data.message);
+        alert("You have exceeded the rate limit. Please wait a moment and try again.");
+      }
       console.log(error);
       // if login error, display error message
       setLoginError(error.response.data.message);

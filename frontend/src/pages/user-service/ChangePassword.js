@@ -50,8 +50,11 @@ function ChangePassword() {
         .catch(err => {
           if (err.response && err.response.data.message === "Old password is incorrect.") {
             setErrorMessage(err.response.data.message);
+          } else if (err.response && err.response.status === 429) {
+            setErrorMessage(err.response.data.message);
+            alert("You have exceeded the rate limit. Please wait a moment and try again.");
           } else {
-            setErrorMessage("An error occurred. Please try again.");
+            setErrorMessage("Old password is incorrect.");
             console.log(err);
           }
         });

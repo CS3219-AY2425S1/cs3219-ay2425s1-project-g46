@@ -29,9 +29,14 @@ export default function MatchingHistory() {
         
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching matching history data:", error);
-        setErrorMessage("Failed to load matching history data.");
-        setLoading(false);
+        if (error.response && error.response.status === 429) {
+          console.error("Error fetching matching history data:", error);
+          alert("You have exceeded the rate limit. Please wait a moment and try again.");
+          setLoading(false);
+        } else {
+          setErrorMessage("Failed to load matching history data.");
+          setLoading(false);
+        }
       }
     };
 

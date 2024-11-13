@@ -26,7 +26,22 @@ function Question() {
   const allowedEmail = "admin@gmail.com"
   // let adminPriviledge = false
   // const loggedInUserEmail = localStorage.getItem("email");
-  
+
+  const fetchQuestions = async () => {
+    try {
+      const response = await axios.get(`${API_GATEWAY_URL_API}/question/`)
+      setData(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.log("setting data null");
+      setData([]);
+      setLoading(false);
+      console.error("Error fetching data:", error.message);
+      if (error.response && error.response.status === 429) {
+        alert("You have exceeded the rate limit. Please wait a moment and try again.");
+      }
+    }
+  }
 
   // Fetch user data from API when the component mounts
   useEffect(() => {
@@ -36,21 +51,8 @@ function Question() {
       setAdminPriviledge(true)
       console.log(adminPriviledge)
     }
-    fetch(`${API_GATEWAY_URL_API}/question/`)
-      .then((response) => response.json())
-      .then((data) => {
-        setData(data)
-        // Switch loading to false after fetch is completed
-        setLoading(false);
-        
-        
-      })
-      .catch((error) => {
-        setData(null);
-        setLoading(false);
-        console.error("Error fetching data:", error)
-      }); 
-      
+
+    fetchQuestions();
   }, []);
 
   if (loading) {
@@ -112,6 +114,9 @@ function Question() {
       if (error.response && error.response.status === 409) {
         setError('A question with the same title already exists. Please enter a new question.');
         setLoading(false);
+      } else if (error.response && error.response.status === 429) {
+        setError("You have exceeded the rate limit. Please wait a moment and try again.");
+        setLoading(false);
       }
       console.error("Error submitting form:", error);
     }
@@ -135,13 +140,17 @@ function Question() {
     try {
       // Set loading to true before calling API
       setLoading(true);
-      
+
       await axios.delete(`${API_GATEWAY_URL_API}/question/delete/${id}`);
       console.log("Question deleted successfully");
-      
+
       window.location.reload();
       setLoading(false);
     } catch (error) {
+      if (error.response && error.response.status === 429) {
+        setError("You have exceeded the rate limit. Please wait a moment and try again.");
+        setLoading(false);
+      }
       console.error("Error deleting question:", error);
     }
   };
@@ -163,50 +172,50 @@ function Question() {
         {/* <h1>Make Questions</h1> */}
         {adminPriviledge && (
           <>
-          <h1>{selectedQuestionId ? "Edit Question" : "Make Questions"}</h1>
-          <form id="questionForm" onSubmit={handleSubmit}>
-            <div>
-              <input
-                type="Title"
-                name="title"
-                placeholder="Title"
-                value={formData.title}
-                onChange={handleFormChange}
-                autoComplete="off"
-                required
-              />
-              <input
-                type="Category"
-                name="category"
-                placeholder="Category"
-                value={formData.category}
-                onChange={handleFormChange}
-                required
-              />
-              <select name="complexity" value={formData.complexity} onChange={handleFormChange} required>
-                <option value="">Select Complexity</option>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-              </select>
-            </div>
-            <div>
-              <textarea
-                id="description"
-                name="description"
-                placeholder="Enter your description here..."
-                value={formData.description}
-                onChange={handleFormChange}
-              ></textarea>
-              {/* <button type="submit">Add</button> */}
-              <button type="submit" >{selectedQuestionId ? "Update" : "Add"}</button>
-              {selectedQuestionId && (
-                <button type="button" onClick={handleReturnToAdd}>
-                  Return to Add Question
-                </button>
-              )}
-            </div>
-          </form>
+            <h1>{selectedQuestionId ? "Edit Question" : "Make Questions"}</h1>
+            <form id="questionForm" onSubmit={handleSubmit}>
+              <div>
+                <input
+                  type="Title"
+                  name="title"
+                  placeholder="Title"
+                  value={formData.title}
+                  onChange={handleFormChange}
+                  autoComplete="off"
+                  required
+                />
+                <input
+                  type="Category"
+                  name="category"
+                  placeholder="Category"
+                  value={formData.category}
+                  onChange={handleFormChange}
+                  required
+                />
+                <select name="complexity" value={formData.complexity} onChange={handleFormChange} required>
+                  <option value="">Select Complexity</option>
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+              <div>
+                <textarea
+                  id="description"
+                  name="description"
+                  placeholder="Enter your description here..."
+                  value={formData.description}
+                  onChange={handleFormChange}
+                ></textarea>
+                {/* <button type="submit">Add</button> */}
+                <button type="submit" >{selectedQuestionId ? "Update" : "Add"}</button>
+                {selectedQuestionId && (
+                  <button type="button" onClick={handleReturnToAdd}>
+                    Return to Add Question
+                  </button>
+                )}
+              </div>
+            </form>
           </>
         )}
 
