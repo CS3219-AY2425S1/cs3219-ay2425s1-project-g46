@@ -44,16 +44,22 @@
 
 #tabs #submitButton:hover,
 #tabs #submitButton:focus {
-  background-color: #45a049 !important; 
+  background-color: #45a049 !important;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2) !important;
   border-color: #45a049;
 
 }
 
-#disconnection-text{
+#disconnection-text {
   color: red;
   float: right;
-  padding: 12px ;
+  padding: 12px;
+}
+
+#reconnection-text {
+  color: #45a049;
+  float: right;
+  padding: 12px;
 }
 
 #submitCount {

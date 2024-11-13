@@ -5,34 +5,38 @@ import { apiGatewaySocket } from "../config/socket";
 import useSessionStorage from "../hook/useSessionStorage";
 
 const ContentEditor = ({ id }) => {
-  const [content, setContent] = useSessionStorage("", "content");
-
-
-  useEffect(() => {
-    console.log(id);
-
-    // emit once for default values
-    apiGatewaySocket.emit("sendContent", { id, content });
-  }, [id]);
+  const [content, setContent, removeContent] = useSessionStorage("", "content");
 
   useEffect(() => {
     console.log(id);
 
     // emit once for default values
     apiGatewaySocket.emit("sendContent", { id, content });
+  }, [id, content]);
 
+  useEffect(() => {
     apiGatewaySocket.on("receiveContent", ({ content }) => {
       setContent(content);
       console.log("content received: ", content);
     });
 
+    apiGatewaySocket.on("sessionEnded", (socketId) => {
+      removeContent();
+    });
+
+    apiGatewaySocket.on("checkRoomResponse", ({ isRoomExisting, content }) => {
+      console.log('isRoomExisting', isRoomExisting);
+      if (isRoomExisting) {
+        setContent(content);
+      }
+    });
+
+
     return () => {
       apiGatewaySocket.off("receiveContent");
-    };
-  }, [id, content]);
-
-  apiGatewaySocket.on("sessionEnded", (socketId) => {
-    setContent("");
+      apiGatewaySocket.off("sessionEnded");
+      apiGatewaySocket.off("checkRoomResponse");
+    }
   });
 
   const updateContent = (e) => {

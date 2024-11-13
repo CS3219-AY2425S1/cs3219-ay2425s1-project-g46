@@ -40,6 +40,7 @@ const handleSocketIO = (io) => {
     socket.on("match_found", (data) => {
       const { user1, user2, matchData, id } = data;
 
+      console.log("match found");
       console.log("data", matchData);
 
       // Notify both users about the match

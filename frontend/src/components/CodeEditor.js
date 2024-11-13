@@ -1,6 +1,10 @@
 // Author(s): Xue ling, Calista
 import "./styles/CodeEditor.css";
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  // useRef,
+  useState
+} from "react";
 import { apiGatewaySocket } from "../config/socket";
 import Editor from "@monaco-editor/react";
 import supportedLanguages from "../data/supportedLanguages.json";
@@ -10,11 +14,11 @@ import OutputWindow from "./OutputWindow";
 import { API_GATEWAY_URL_API } from "../config/constant";
 
 const CodeEditor = ({ id }) => {
-  const [code, setCode] = useSessionStorage("", "code");
-  const editorRef = useRef(null);
+  const [code, setCode, removeCode] = useSessionStorage("", "code");
+  // const editorRef = useRef(null);
   const [language, setLanguage] = useState("javascript");
   const [outputDetails, setOutputDetails] = useState(null);
-  const [processing, setProcessing] = useState(null);
+  const [, setProcessing] = useState(null);
 
   useEffect(() => {
     console.log(id);
@@ -22,7 +26,7 @@ const CodeEditor = ({ id }) => {
     // emit once for default values
     apiGatewaySocket.emit("sendCode", { id, code });
     apiGatewaySocket.emit("languageChange", { id, language });
-  }, [id]);
+  }, [id, code, language]);
 
   useEffect(() => {
     console.log(id);
@@ -33,21 +37,30 @@ const CodeEditor = ({ id }) => {
 
     });
 
-    apiGatewaySocket.on("languageChange", ({ language }) => {
+    apiGatewaySocket.on("receivelanguageChange", ({ language }) => {
       setLanguage(language);
+    });
+
+    apiGatewaySocket.on("sessionEnded", (socketId) => {
+      removeCode();
+      setLanguage("javascript");
+    });
+
+    apiGatewaySocket.on("checkRoomResponse", ({ isRoomExisting, code, language }) => {
+      console.log('isRoomExisting', isRoomExisting);
+      if (isRoomExisting) {
+        setCode(code);
+        setLanguage(language);
+      }
     });
 
     return () => {
       apiGatewaySocket.off("receiveCode");
-      apiGatewaySocket.off("languageChange");
+      apiGatewaySocket.off("receivelanguageChange");
+      apiGatewaySocket.off("sessionEnded");
+      apiGatewaySocket.off("checkRoomResponse");
     };
-  }, [id, language, code]);
-
-
-  apiGatewaySocket.on("sessionEnded", (socketId) => {
-    setCode("");
-  });
-
+  }, [id, code, setCode, removeCode, language, setLanguage]);
 
   function handleEditorChange(code, event) {
     setCode(code);

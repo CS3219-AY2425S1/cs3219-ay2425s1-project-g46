@@ -1,4 +1,6 @@
 const axios = require("axios");
+const db = require("../config/firebase");
+const collabCollection = db.collection("collabs");
 
 /**
  * POST /add
@@ -65,4 +67,24 @@ const getSubmissionResult = async (req, res) => {
   }
 };
 
-module.exports = { submitCode, getSubmissionResult };
+const getCollabById = async (id) => {
+  try {
+    console.log("get collab by id:", id);
+    const collab = collabCollection.doc(id);
+    const data = await collab.get();
+
+    if (!data.exists) {
+      return { status: 404, error: "Collab not found" };
+    }
+
+    return { status: 200, data: data.data() };
+  } catch (error) {
+    return { status: 500, error: error.message };
+  }
+};
+
+module.exports = { 
+  submitCode, 
+  getSubmissionResult,
+  getCollabById
+};

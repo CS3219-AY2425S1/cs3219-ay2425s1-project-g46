@@ -2,14 +2,6 @@
 const db = require("../config/firebase");
 const matchCollection = db.collection("matches");
 
-/**
- * POST /add
- *
- * Creates match and stores in firebase
- *
- * Responses:
- * - 500: Server error if something goes wrong while fetching data.
- */
 const createMatch = async (user1, user2) => {
   try {
     const matchJson = {
@@ -25,7 +17,8 @@ const createMatch = async (user1, user2) => {
         complexity: user2.difficultyLevel,
         isAny: user2.isAny
       },
-      createdAt: new Date().toLocaleString("en-SG")
+      createdAt: new Date().toLocaleString("en-SG"),
+      status: "ongoing"
     };
 
     const matchRef = await matchCollection.doc();
@@ -41,6 +34,36 @@ const createMatch = async (user1, user2) => {
   }
 }
 
+const getMatchById = async (id) => {
+  try {
+    const match = matchCollection.doc(id);
+    const data = await match.get();
+
+    if (!data.exists) {
+      return { status: 404, error: "Match not found" };
+    }
+
+    return { status: 200, msg: "Match retrieved successfully", data: data.data() };
+  } catch (error) {
+    return { status: 500, error: error.message };
+  }
+}
+
+const updateMatch = async (id) => {
+  try {
+    console.log("Updating match ID:", id);
+
+    const response = await matchCollection.doc(id).set({ status: "completed" }, { merge: true });
+
+    return { status: 200, msg: "Match updated successfully", response };
+  } catch (error) {
+    console.log(error.message)
+    return { status: 500, error: error.message };
+  }
+}
+
 module.exports = {
-  createMatch
+  createMatch,
+  getMatchById,
+  updateMatch
 };

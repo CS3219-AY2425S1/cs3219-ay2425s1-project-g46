@@ -151,7 +151,7 @@ const deleteQuestion = async (req, res) => {
  */
 const getRandomQuestionsByCategory = async (req, res) => {
   try {
-    console.log("entered random");
+    console.log("entered random category");
     const category = req.params.category;
     const questions = await questionCollection.where("category", "array-contains", category).get();
 
@@ -187,6 +187,7 @@ const getRandomQuestionsByCategory = async (req, res) => {
  */
 const getRandomQuestionsByCategoryAndComplexity = async (req, res) => {
   try {
+    console.log("entered random category and complexity");
     const category = req.params.category;
     const complexity = req.params.complexity;
 
