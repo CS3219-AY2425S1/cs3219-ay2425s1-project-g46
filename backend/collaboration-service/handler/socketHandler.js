@@ -195,7 +195,6 @@ const handleSocketIO = (apiGatewaySocket) => {
       activeUserInRoom[roomId] - 1
     );
 
-    console.log("HELP", activeUserInRoom[roomId]);
     setTimeout(() => {
       if (!isRefreshOrClose) { //reconnected
         activeUserInRoom[roomId] += 1; 

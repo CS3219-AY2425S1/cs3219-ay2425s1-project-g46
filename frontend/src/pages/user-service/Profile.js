@@ -30,6 +30,9 @@ function Profile() {
         .then((response) => {
           console.log('Response status:', response.status);
           if (!response.ok) {
+            if (response && response.status === 429) {
+              alert("You have exceeded the rate limit. Please wait a moment and try again.");
+            }
             throw new Error(`Profile data could not be fetched. Status: ${response.status}`);
           }
           return response.json();
@@ -60,6 +63,9 @@ function Profile() {
       fetch(`${API_GATEWAY_URL_API}/user/getuserreview/${email}`)
         .then((response) => {
           if (!response.ok) {
+            if (response && response.status === 429) {
+              alert("You have exceeded the rate limit. Please wait a moment and try again.");
+            }
             throw new Error(`Review data could not be fetched. Status: ${response.status}`);
           }
           return response.json();

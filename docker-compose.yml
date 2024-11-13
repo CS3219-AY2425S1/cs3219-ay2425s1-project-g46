@@ -46,12 +46,11 @@ services:
     container_name: matching-service
     environment:
       - RABBIT_HOSTNAME=rabbitmq # URL to connect to rabbitmq container in the network
+      - API_GATEWAY_URL=http://api-gateway:8000
     depends_on: # condition to wait for rabbitmq container to be ready
       rabbitmq:
         condition: service_healthy 
     build: ./backend/matching-service # Path to the directory containing the Dockerfile for building the matching-service image.
-    ports:
-      - 5002:5002 # Maps port 5002 on the host to port 5002 in the container, making the app accessible on the host.
     volumes:
       - ./backend/matching-service:/app # Mounts the host directory './backend/matching-service' to '/app' in the container.
       - /app/node_modules # Anonymous Volume
@@ -60,18 +59,54 @@ services:
 
   collaboration-service:
     container_name: collaboration-service
-    build: ./backend/collaboration-service # Path to the directory containing the Dockerfile for building the matching-service image.
+    environment:
+      - URL_QUESTION_SERVICE=http://question-service:5000/question
+      - API_GATEWAY_URL=http://api-gateway:8000
+    build: ./backend/collaboration-service # Path to the directory containing the Dockerfile for building the collaboration-service image.
     ports:
-      - 5003:5003 # Maps port 5002 on the host to port 5002 in the container, making the app accessible on the host.
+      - 5003:5003 # Maps port 5003 on the host to port 5003 in the container, making the app accessible on the host.
     volumes:
-      - ./backend/collaboration-service:/app # Mounts the host directory './backend/matching-service' to '/app' in the container.
+      - ./backend/collaboration-service:/app # Mounts the host directory './backend/collaboration-service' to '/app' in the container.
       - /app/node_modules # Anonymous Volume
     networks:
-      - peerprep-network # Connects the matching-service to the 'peerprep-network' network.
+      - peerprep-network # Connects the collaboration-service to the 'peerprep-network' network.
+
+  api-gateway:
+    container_name: api-gateway
     environment:
-      # - QUESTION_SERVICE_URL=question-service
-      - QUESTION_SERVICE_URL=http://question-service:5000
-      
+      - QUESTION_SERVICE_URL=http://question-service:5000/question
+      - USER_SERVICE_URL=http://user-service:5001/user
+      - COLLABORATION_SERVICE_URL=http://collaboration-service:5003/collaboration
+    depends_on:
+      question-service:
+        condition: service_started
+      user-service:
+        condition: service_started
+      collaboration-service:
+        condition: service_started
+    build: ./backend/api-gateway # Path to the directory containing the Dockerfile for building the api-gateway image.
+    ports:
+      - 8000:8000 # Maps port 8000 on the host to port 8000 in the container, making the app accessible on the host.
+    volumes:
+      - ./backend/api-gateway:/app # Mounts the host directory './backend/api-gateway' to '/app' in the container.
+      - /app/node_modules # Anonymous Volume
+    networks:
+      - peerprep-network # Connects the api-gateway to the 'peerprep-network' network.
+    
+  frontend:
+    container_name: frontend
+    environment:
+      - REACT_APP_API_GATEWAY_URL=http://localhost:8000
+    build: ./frontend
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - peerprep-network
+    depends_on:
+      - api-gateway
 
 volumes:
   rabbitmq_data:

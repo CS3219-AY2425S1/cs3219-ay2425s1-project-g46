@@ -204,7 +204,7 @@ const getHistory = async (req, res) => {
       return acc;
     }, {});
 
-    console.log("Fetched matching history data: ", filteredHistoryData);
+    console.log("Fetched matching history data");
     return res.status(200).send(filteredHistoryData);
 
   } catch (error) {

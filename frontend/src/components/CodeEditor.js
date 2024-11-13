@@ -109,6 +109,9 @@ const CodeEditor = ({ id }) => {
       // Start polling for result
       pollForResult(submissionId);
     } catch (error) {
+      if (error.response && error.response.status === 429) {
+        alert("You have exceeded the rate limit. Please wait a moment and try again.");
+      }
       console.error("Error submitting code:", error);
       setProcessing(false);
     }

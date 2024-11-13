@@ -86,7 +86,7 @@ const getReview = async (email) => {
 
 const addWebsiteFeedback = async (feedbackData) => {
   try {
-    const response = await axios.post(`${USER_SERVICE_URL}/submitCode`, feedbackData);
+    const response = await axios.post(`${USER_SERVICE_URL}/addwebsitefeedback`, feedbackData);
     return response;
   } catch (error) {
     throw error;

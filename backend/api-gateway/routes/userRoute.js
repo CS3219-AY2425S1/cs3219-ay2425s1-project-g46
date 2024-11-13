@@ -113,7 +113,7 @@ userRouter.get("/getuserreview/:email", async (req, res) => {
   }
 });
 
-userRouter.post("/submitCode", async (req, res) => {
+userRouter.post("/addwebsitefeedback", async (req, res) => {
   try {
     const response = await addWebsiteFeedback(req.body);
     res.status(response.status).send({ message: response.data.message });

@@ -3,6 +3,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const rateLimit = require('express-rate-limit');
 const http = require("http");
 const { Server } = require("socket.io");
 const { handleSocketIO } = require("./handler/socketHandler.js");
@@ -26,6 +27,22 @@ handleSocketIO(io);
 
 app.use(express.json());
 app.use(cors());
+
+// Define a rate limiter with options
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+
+  // Custom handler function for rate limit errors
+  handler: (req, res) => {
+    res.status(429).send({
+      error: 'You have exceeded the maximum allowed requests. Please wait a while and try again.',
+    });
+  },
+});
+
+app.use(apiLimiter);
 
 // default API from expressJS
 app.get("/", (req, res) => {

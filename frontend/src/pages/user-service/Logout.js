@@ -18,6 +18,9 @@ function Logout() {
       // navigate to home page after logout
       navigate("/");
     }).catch((error) => {
+      if (error.response && error.response.status === 429) {
+        alert("You have exceeded the rate limit. Please wait a moment and try again.");
+      }
       console.log(error);
       return
     });
